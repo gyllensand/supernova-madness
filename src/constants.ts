@@ -1,6 +1,3 @@
-export const INSTRUMENTS = [0, 1, 2];
-export const BG_THEME = [0, 1];
-
 export const LIGHT_COLORS = [
   "",
   "#ffffff",

@@ -54,6 +54,9 @@ export const range = (
 export const getSizeByAspect = (size: number, aspect: number) =>
   aspect > 1 ? size : size * aspect;
 
+export const getSizeByWidthAspect = (size: number, aspect: number) =>
+  aspect > 1 ? size * aspect : size;
+
 export const adjustColor = (color: string, amount: number) => {
   return (
     "#" +

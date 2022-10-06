@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
-import { BackSide, CylinderGeometry, Mesh } from "three";
+import { BackSide, Euler } from "three";
 import { MeshDistortMaterial } from "@react-three/drei";
+import { a, SpringValue } from "@react-spring/three";
 
 export interface CircleProps {
   radius: number;
@@ -9,7 +9,7 @@ export interface CircleProps {
   color: string;
   zPos: number;
   distortSpeed: number;
-  reference?: any;
+  circleSpring?: { rotation: SpringValue<number[]> };
 }
 
 const Circle = ({
@@ -19,9 +19,15 @@ const Circle = ({
   color,
   zPos,
   distortSpeed,
+  circleSpring,
 }: CircleProps) => {
   return (
-    <mesh position={[0, 0, zPos]} scale={[1, 1, 1]} castShadow receiveShadow>
+    <a.mesh
+      {...(circleSpring as any)}
+      position={[0, 0, zPos]}
+      castShadow
+      receiveShadow
+    >
       <ringGeometry args={[0.3, radius, 64, 3, thetaStart, Math.PI / 2]} />
       <MeshDistortMaterial
         side={BackSide}
@@ -38,7 +44,7 @@ const Circle = ({
         opacity={0.5}
         wireframe={wireframe}
       />
-    </mesh>
+    </a.mesh>
   );
 };
 

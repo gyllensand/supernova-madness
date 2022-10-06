@@ -1,75 +1,75 @@
 import { OrbitControls } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
-import { RefObject, useEffect, useMemo, useRef } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { start } from "tone";
 import {
-  getRandomNumber,
   getSizeByAspect,
+  getSizeByWidthAspect,
   pickRandomBoolean,
   pickRandomColorWithTheme,
   pickRandomDecimalFromInterval,
   pickRandomHash,
   pickRandomIntFromInterval,
-  pickRandomSphericalPos,
+  sortRandom,
 } from "./utils";
 import {
   EffectComposer,
   SSAO,
   SelectiveBloom,
 } from "@react-three/postprocessing";
-import { createNoise2D, NoiseFunction2D } from "simplex-noise";
-import { Vector3, Vector2, SpotLight, AmbientLight } from "three";
-import Circle, { CircleProps } from "./components/Circle";
+import { useSprings } from "@react-spring/three";
+import { Vector2, SpotLight, AmbientLight } from "three";
+import Circle, { CircleProps } from "./Circle";
 import {
-  BG_THEME,
   DARK_BG_COLORS,
   DARK_COLORS,
   LIGHT_BG_COLORS,
   LIGHT_COLORS,
 } from "./constants";
-import Cylinder, { CylinderProps } from "./components/Cylinder";
 
 const circleCount = pickRandomIntFromInterval(20, 30);
 const circleWireframe = pickRandomBoolean();
 
-const bgTheme = pickRandomHash(BG_THEME);
+const bgTheme = pickRandomHash([0, 1]);
 const bgColor = pickRandomHash(
   bgTheme === 0 ? LIGHT_BG_COLORS : DARK_BG_COLORS
 );
 const primaryTheme = bgTheme === 0 ? DARK_COLORS : LIGHT_COLORS;
-const primaryBg = pickRandomHash(primaryTheme);
+const primaryColor = pickRandomHash(primaryTheme);
 
 // @ts-ignore
-// window.$fxhashFeatures = {
-//   instrument,
-//   xRowCount: ROW_X,
-//   yRowCount: ROW_Y,
-//   zRowCount: ROW_Z,
-//   bgColor,
-//   primaryColor,
-//   secondaryColor,
-// };
+window.$fxhashFeatures = {
+  // instrument,
+  circleCount,
+  wireframe: circleWireframe,
+  bgColor,
+  primaryColor,
+};
 
-function getRandomPointInsideCircle(offset) {
-  const r = (offset * Math.sqrt(Math.random())) / 2;
-  const theta = Math.random() * 2 * Math.PI;
-  const x = r * Math.cos(theta);
-  const y = r * Math.sin(theta);
-
-  return new Vector2(x, y);
-}
+const circles = new Array(circleCount).fill(null).map<CircleProps>((o, i) => ({
+  radius: pickRandomDecimalFromInterval(1.5, 3),
+  // radius: 4 - i / 15,
+  thetaStart: pickRandomDecimalFromInterval(0, Math.PI * 2),
+  wireframe: circleWireframe,
+  color: pickRandomColorWithTheme(primaryColor, primaryTheme, 10),
+  zPos: 1 - i / 8,
+  distortSpeed: pickRandomDecimalFromInterval(0.1, 1),
+}));
 
 const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
   const toneInitialized = useRef(false);
-  const { aspect, clock, viewport, size } = useThree((state) => ({
+  const { aspect } = useThree((state) => ({
     aspect: state.viewport.aspect,
-    clock: state.clock,
-    viewport: state.viewport,
-    size: state.size,
   }));
 
-  const noise = createNoise2D(getRandomNumber);
-  const noiseZ = useRef(0);
+  // const [lastPlayedSample, setLastPlayedSample] = useState<Sample>();
+  // const availableChords = useMemo(
+  //   () =>
+  //     AUDIO[internalInstrument].filter(
+  //       ({ index }) => index !== lastPlayedSample?.index
+  //     ),
+  //   [lastPlayedSample]
+  // );
 
   const ambientRef = useRef<AmbientLight>();
   const mainLightRef = useRef<SpotLight>();
@@ -84,36 +84,66 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
     centerLightRef.current?.target.updateMatrixWorld();
   }, []);
 
-  const circles = useMemo(
-    () =>
-      new Array(circleCount).fill(null).map<CircleProps>((o, i) => {
-        return {
-          radius: pickRandomDecimalFromInterval(1.5, 3),
-          // radius: 4 - i / 15,
-          thetaStart: pickRandomDecimalFromInterval(0, Math.PI * 2),
-          wireframe: circleWireframe,
-          color: pickRandomColorWithTheme(primaryBg, primaryTheme, 10),
-          zPos: 1 - i / 8,
-          distortSpeed: pickRandomDecimalFromInterval(0.1, 1),
-        };
-      }),
-    []
-  );
+  // useEffect(() => {
+  //   if (lastPlayedSample && lastPlayedSample.sampler.loaded) {
+  //     lastPlayedSample.sampler.triggerAttack(
+  //       instrument === 1 ? "G#-1" : "C#-1"
+  //     );
+  //   }
+  // }, [lastPlayedSample]);
 
-  const cylinders = useMemo(
-    () =>
-      new Array(3).fill(null).map<CylinderProps>(() => ({
-        radiusTop: pickRandomDecimalFromInterval(0.9, 1),
-        radiusBottom: pickRandomDecimalFromInterval(1, 1.1),
-        color: pickRandomHash(LIGHT_COLORS),
-        position: new Vector3(
-          pickRandomDecimalFromInterval(-3, 3),
-          pickRandomDecimalFromInterval(-3, 3),
-          pickRandomDecimalFromInterval(-1, 2)
+  const [circleSprings, setCircleSprings] = useSprings(circleCount, (i) => ({
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+  }));
+
+  const onPointerDown = useCallback(async () => {
+    if (!toneInitialized.current) {
+      await start();
+      toneInitialized.current = true;
+    }
+
+    const shuffledIndexes = sortRandom(circles.map((o, i) => i));
+
+    setCircleSprings.start((i) => ({
+      rotation: [
+        0,
+        0,
+        pickRandomDecimalFromInterval(
+          circleSprings[i].rotation.get()[2] - Math.PI,
+          circleSprings[i].rotation.get()[2] + Math.PI
         ),
-      })),
-    []
-  );
+      ],
+      scale: [
+        pickRandomDecimalFromInterval(0.8, 1.2),
+        pickRandomDecimalFromInterval(0.8, 1.2),
+        1,
+      ],
+      delay: shuffledIndexes[i] * 40,
+      config: {
+        mass: 4,
+        tension: 150,
+        friction: 45,
+      },
+    }));
+
+    // const currentSampler = pickRandomHash(availableChords);
+    // setLastPlayedSample(currentSampler);
+  }, [setCircleSprings, circleSprings]);
+
+  useEffect(() => {
+    const ref = canvasRef?.current;
+
+    if (!ref) {
+      return;
+    }
+
+    ref.addEventListener("pointerdown", onPointerDown);
+
+    return () => {
+      ref.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [onPointerDown, canvasRef]);
 
   return (
     <>
@@ -145,16 +175,12 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
           getSizeByAspect(1, aspect),
         ]}
       >
-        {/* {cylinders.map((o, i) => (
-          <Cylinder key={i} {...o} />
-        ))} */}
-
         {circles.map((o, i) => (
-          <Circle key={i} {...o} />
+          <Circle key={i} {...o} circleSpring={circleSprings[i]} />
         ))}
       </group>
-      <mesh receiveShadow position={[0, 0, 7.5]} rotation={[-Math.PI, 0, 0]}>
-        <planeGeometry args={[15, 15]} />
+      <mesh position={[0, 0, 7.5]} rotation={[-Math.PI, 0, 0]}>
+        <planeGeometry args={[getSizeByWidthAspect(15, aspect), 15]} />
         <meshStandardMaterial color={bgColor} />
       </mesh>
       {/* <EffectComposer multisampling={0}>
