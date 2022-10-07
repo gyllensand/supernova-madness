@@ -30,7 +30,6 @@ export const LIGHT_BG_COLORS = [
   "#ffffff",
   "#FCEEB5",
   "#fff6d1",
-  "#ffce00",
   "#d8ffdd",
   "#f7c8d3",
 ];

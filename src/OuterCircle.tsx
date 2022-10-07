@@ -1,13 +1,11 @@
-import { BackSide, Euler, Mesh, RingGeometry } from "three";
+import { BackSide } from "three";
 import { MeshDistortMaterial } from "@react-three/drei";
-import { a, SpringValue } from "@react-spring/three";
 import { ringSegments } from "./Scene";
-import { useEffect, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { a, SpringValue } from "@react-spring/three";
 
 const AnimatedDistortMaterial = a(MeshDistortMaterial);
 
-export interface CircleProps {
+export interface OuterCircleProps {
   radius: number;
   wireframe: boolean;
   circleInnerRadius: number;
@@ -17,13 +15,14 @@ export interface CircleProps {
   zPos: number;
   distortSpeed: number;
   emissiveIntensity: number;
-  circleSpring?: {
+  opacity: number;
+  outerCircleSpring?: {
+    opacity: SpringValue<number>;
     scale: SpringValue<number[]>;
-    rotation: SpringValue<number[]>;
   };
 }
 
-const Circle = ({
+const OuterCircle = ({
   radius,
   wireframe,
   circleInnerRadius,
@@ -33,24 +32,13 @@ const Circle = ({
   color,
   zPos,
   distortSpeed,
-  circleSpring,
-}: CircleProps) => {
-  const ref = useRef<Mesh<RingGeometry>>();
-  useFrame(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    // @ts-ignore
-    // ref.current.speed = 10;
-
-    // console.log(ref.current.geometry);
-    // console.log(circleSpring?.distortSpeed.get());
-  });
-
+  opacity,
+  outerCircleSpring,
+}: OuterCircleProps) => {
   return (
     <a.mesh
-      {...(circleSpring as any)}
+      // @ts-ignore
+      scale={outerCircleSpring?.scale}
       position={[0, 0, zPos]}
       castShadow
       receiveShadow
@@ -68,7 +56,6 @@ const Circle = ({
       {/*
       // @ts-ignore */}
       <AnimatedDistortMaterial
-        ref={ref}
         side={BackSide}
         attach="material"
         color={color}
@@ -80,11 +67,11 @@ const Circle = ({
         roughness={0.4}
         metalness={0.8}
         transparent
-        opacity={0.5}
+        opacity={outerCircleSpring?.opacity || 0.01}
         wireframe={wireframe}
       />
     </a.mesh>
   );
 };
 
-export default Circle;
+export default OuterCircle;
