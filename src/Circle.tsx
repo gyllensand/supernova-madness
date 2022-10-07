@@ -1,11 +1,8 @@
-import { BackSide, Euler, Mesh, RingGeometry } from "three";
+import { BackSide } from "three";
 import { MeshDistortMaterial } from "@react-three/drei";
 import { a, SpringValue } from "@react-spring/three";
-import { ringSegments } from "./Scene";
-import { useEffect, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
-
-const AnimatedDistortMaterial = a(MeshDistortMaterial);
+import { circleRoughness, ringSegments } from "./Scene";
+import { roughnessMode } from "./constants";
 
 export interface CircleProps {
   radius: number;
@@ -35,19 +32,6 @@ const Circle = ({
   distortSpeed,
   circleSpring,
 }: CircleProps) => {
-  const ref = useRef<Mesh<RingGeometry>>();
-  useFrame(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    // @ts-ignore
-    // ref.current.speed = 10;
-
-    // console.log(ref.current.geometry);
-    // console.log(circleSpring?.distortSpeed.get());
-  });
-
   return (
     <a.mesh
       {...(circleSpring as any)}
@@ -65,10 +49,8 @@ const Circle = ({
           thetaLength,
         ]}
       />
-      {/*
-      // @ts-ignore */}
-      <AnimatedDistortMaterial
-        ref={ref}
+
+      <MeshDistortMaterial
         side={BackSide}
         attach="material"
         color={color}
@@ -76,9 +58,7 @@ const Circle = ({
         speed={distortSpeed}
         emissive={color}
         emissiveIntensity={emissiveIntensity}
-        // blending={NormalBlending}
-        roughness={0.4}
-        metalness={0.8}
+        {...roughnessMode[circleRoughness]}
         transparent
         opacity={0.5}
         wireframe={wireframe}

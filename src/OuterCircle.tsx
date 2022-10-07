@@ -15,7 +15,6 @@ export interface OuterCircleProps {
   zPos: number;
   distortSpeed: number;
   emissiveIntensity: number;
-  opacity: number;
   outerCircleSpring?: {
     opacity: SpringValue<number>;
     scale: SpringValue<number[]>;
@@ -32,7 +31,6 @@ const OuterCircle = ({
   color,
   zPos,
   distortSpeed,
-  opacity,
   outerCircleSpring,
 }: OuterCircleProps) => {
   return (
@@ -63,7 +61,6 @@ const OuterCircle = ({
         speed={distortSpeed}
         emissive={color}
         emissiveIntensity={emissiveIntensity}
-        // blending={NormalBlending}
         roughness={0.4}
         metalness={0.8}
         transparent

@@ -19,15 +19,11 @@ import {
   pickRandomIntFromInterval,
   sortRandom,
 } from "./utils";
-import {
-  EffectComposer,
-  SSAO,
-  SelectiveBloom,
-} from "@react-three/postprocessing";
-import { a, useSprings } from "@react-spring/three";
-import { SpotLight, AmbientLight, BackSide } from "three";
+import { useSprings } from "@react-spring/three";
+import { SpotLight, AmbientLight } from "three";
 import Circle, { CircleProps } from "./Circle";
 import {
+  CIRCLE_ROUGHNESS,
   DARK_BG_COLORS,
   DARK_COLORS,
   LIGHT_BG_COLORS,
@@ -36,14 +32,14 @@ import {
 import OuterCircle, { OuterCircleProps } from "./OuterCircle";
 import { CHORDS, PLUCKS, Sample } from "./App";
 
-const outerCircleCount = 10;
+const outerCircleCount = pickRandomIntFromInterval(10, 15);
+export const circleRoughness = pickRandomHash(CIRCLE_ROUGHNESS);
 const circleCount = pickRandomIntFromInterval(20, 30);
 const circleWireframe = pickRandomBoolean();
 const circleInnerRadius = pickRandomHash([
-  ...new Array(10).fill(null).map(() => 0.2),
-  ...new Array(40).fill(null).map(() => 0.3),
-  ...new Array(10).fill(null).map(() => 0.4),
-  2,
+  ...new Array(1).fill(null).map(() => 0.2),
+  ...new Array(4).fill(null).map(() => 0.3),
+  ...new Array(1).fill(null).map(() => 0.4),
 ]);
 
 const bgTheme = pickRandomHash([0, 1]);
@@ -89,7 +85,6 @@ const outerCircles = new Array(outerCircleCount)
     emissiveIntensity: pickRandomDecimalFromInterval(0.1, 1),
     color: pickRandomColorWithTheme(primaryColor, primaryTheme, 10),
     zPos: 1 - i / 3,
-    opacity: 0.01,
     distortSpeed: pickRandomDecimalFromInterval(0.1, 0.5),
   }));
 
@@ -215,7 +210,7 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
       },
     }));
 
-    PLUCKS.forEach((o) => o.sampler.triggerRelease("C#-1"))
+    PLUCKS.forEach((o) => o.sampler.triggerRelease("C#-1"));
     setTimeout(() => {
       PLUCKS[lastPlayedSample?.pluckIndex || 0].sampler.triggerAttack("C#-1");
     }, 100);
@@ -251,7 +246,6 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
     <>
       <OrbitControls enabled={true} />
       <ambientLight ref={ambientRef} intensity={0.2} />
-      {/* <pointLight position={[-2, 0, -2]} intensity={3} /> */}
       <spotLight
         ref={mainLightRef}
         position={[0, 15, -7.5]}
@@ -292,24 +286,6 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
         <planeGeometry args={[getSizeByWidthAspect(15, aspect), 15]} />
         <meshStandardMaterial color={bgColor} />
       </mesh>
-      {/* <EffectComposer multisampling={0}>
-        <SSAO
-          samples={31}
-          radius={10}
-          intensity={18}
-          luminanceInfluence={0.1}
-          color="#000000"
-        />
-      </EffectComposer> */}
-      {/* <EffectComposer autoClear={false}>
-        <SelectiveBloom
-          selection={[circleRef]}
-          intensity={0.5}
-          luminanceThreshold={0.01}
-          luminanceSmoothing={0.025}
-          lights={[ambientRef]}
-        />
-      </EffectComposer> */}
     </>
   );
 };
