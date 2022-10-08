@@ -3,45 +3,14 @@ import {
   pickRandomIntFromInterval,
 } from "./utils";
 
-export const CIRCLE_ROUGHNESS2 = [
-  ...new Array(4).fill(null).map(() => ({
+export const CIRCLE_ROUGHNESS = [
+  ...new Array(3).fill(null).map(() => ({
     roughness: 0.4,
     metalness: 0.8,
   })),
   {
     roughness: pickRandomDecimalFromInterval(0.2, 0.6),
     metalness: pickRandomIntFromInterval(2, 8),
-  },
-];
-
-export const CIRCLE_ROUGHNESS = [
-  ...new Array(16).fill(null).map(() => 0),
-  1,
-  2,
-  3,
-  4,
-];
-
-export const roughnessMode = [
-  {
-    roughness: 0.4,
-    metalness: 0.8,
-  },
-  {
-    roughness: 0.6,
-    metalness: 5,
-  },
-  {
-    roughness: 0.5,
-    metalness: 3,
-  },
-  {
-    roughness: 0.2,
-    metalness: 2,
-  },
-  {
-    roughness: 0.2,
-    metalness: 8,
   },
 ];
 

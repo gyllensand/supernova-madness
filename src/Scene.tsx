@@ -34,30 +34,12 @@ import {
 import OuterCircle, { OuterCircleProps } from "./OuterCircle";
 import { CHORDS, PLUCKS, Sample } from "./App";
 
-export const getSpotlightAngle = (aspect: number, circleRoughness: number) =>
-  circleRoughness === 4
-    ? minMaxNumber(
-        aspect > 1 ? 0.15 : range(0.5, 2, 0.01, 0.15, aspect),
-        0.01,
-        0.15
-      )
-    : circleRoughness === 3
-    ? minMaxNumber(
-        aspect > 1 ? 0.15 : range(0.3, 1.5, 0.01, 0.15, aspect),
-        0.01,
-        0.15
-      )
-    : circleRoughness === 2
-    ? minMaxNumber(
-        aspect > 1 ? 0.15 : range(0.3, 1, 0.01, 0.15, aspect),
-        0.01,
-        0.15
-      )
-    : minMaxNumber(
-        aspect > 1 ? 0.15 : range(0.3, 1, 0.01, 0.15, aspect),
-        0.01,
-        0.15
-      );
+export const getSpotlightAngle = (aspect: number) =>
+  minMaxNumber(
+    aspect > 1 ? 0.15 : range(0.3, 1, 0.01, 0.15, aspect),
+    0.01,
+    0.15
+  );
 
 export const getSpotlightPosY = (aspect: number) =>
   minMaxNumber(aspect > 1 ? 15 : range(0.3, 1, 10, 15, aspect), 10, 15);
@@ -85,7 +67,6 @@ export const ringSegments = circleWireframe
 
 // @ts-ignore
 window.$fxhashFeatures = {
-  // instrument,
   circleCount,
   wireframe: circleWireframe,
   bgColor,
@@ -290,7 +271,7 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
         intensity={1}
         penumbra={1}
         distance={25}
-        angle={getSpotlightAngle(aspect, circleRoughness)}
+        angle={getSpotlightAngle(aspect)}
       />
 
       <group

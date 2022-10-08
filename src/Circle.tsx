@@ -2,7 +2,6 @@ import { BackSide } from "three";
 import { MeshDistortMaterial } from "@react-three/drei";
 import { a, SpringValue } from "@react-spring/three";
 import { circleRoughness, ringSegments } from "./Scene";
-import { roughnessMode } from "./constants";
 
 export interface CircleProps {
   radius: number;
@@ -58,7 +57,7 @@ const Circle = ({
         speed={distortSpeed}
         emissive={color}
         emissiveIntensity={emissiveIntensity}
-        {...roughnessMode[circleRoughness]}
+        {...circleRoughness}
         transparent
         opacity={0.5}
         wireframe={wireframe}
