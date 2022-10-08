@@ -3,6 +3,8 @@ import {
   pickRandomIntFromInterval,
 } from "./utils";
 
+export const PITCH = [0, 1];
+
 export const CIRCLE_ROUGHNESS = [
   ...new Array(3).fill(null).map(() => ({
     roughness: 0.4,

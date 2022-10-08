@@ -30,6 +30,7 @@ import {
   DARK_COLORS,
   LIGHT_BG_COLORS,
   LIGHT_COLORS,
+  PITCH,
 } from "./constants";
 import OuterCircle, { OuterCircleProps } from "./OuterCircle";
 import { CHORDS, PLUCKS, Sample } from "./App";
@@ -44,6 +45,7 @@ export const getSpotlightAngle = (aspect: number) =>
 export const getSpotlightPosY = (aspect: number) =>
   minMaxNumber(aspect > 1 ? 15 : range(0.3, 1, 10, 15, aspect), 10, 15);
 
+export const pitch = pickRandomHash(PITCH);
 const outerCircleCount = pickRandomIntFromInterval(10, 15);
 export const circleRoughness = pickRandomHash(CIRCLE_ROUGHNESS);
 const circleCount = pickRandomIntFromInterval(20, 30);
@@ -67,10 +69,11 @@ export const ringSegments = circleWireframe
 
 // @ts-ignore
 window.$fxhashFeatures = {
+  pitch,
   circleCount,
   wireframe: circleWireframe,
   bgColor,
-  primaryColor,
+  primaryColor: primaryColor === "" ? "transparent" : primaryColor,
 };
 
 const circles = new Array(circleCount).fill(null).map<CircleProps>((o, i) => ({

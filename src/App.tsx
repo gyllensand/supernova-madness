@@ -1,6 +1,6 @@
 import { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import Scene from "./Scene";
+import Scene, { pitch } from "./Scene";
 import { Sampler } from "tone";
 
 console.log(
@@ -19,8 +19,9 @@ export interface Sample {
   sampler: Sampler;
 }
 
-const baseUrlChords = `${process.env.PUBLIC_URL}/audio/chords/`;
-const baseUrlPlucks = `${process.env.PUBLIC_URL}/audio/plucks/`;
+const pitchPath = pitch === 0 ? "high-pitch" : "low-pitch";
+const baseUrlChords = `${process.env.PUBLIC_URL}/audio/${pitchPath}/chords/`;
+const baseUrlPlucks = `${process.env.PUBLIC_URL}/audio/${pitchPath}/plucks/`;
 
 export const PLUCKS: Sample[] = [
   {
