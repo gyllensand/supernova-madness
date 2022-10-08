@@ -13,8 +13,6 @@ console.log(
   "font-size: 12px; background-color: #000000;"
 );
 
-const baseUrl = `${process.env.PUBLIC_URL}/audio/`;
-
 export interface Sample {
   index: number;
   pluckIndex?: number;
@@ -162,13 +160,6 @@ export const CHORDS: Sample[] = [
     }),
   },
 ];
-
-// export const AUDIO = new Sampler({
-//   urls: {
-//     1: "guitar-loop.mp3",
-//   },
-//   baseUrl,
-// });
 
 const App = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);

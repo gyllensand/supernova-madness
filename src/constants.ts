@@ -1,5 +1,21 @@
+import {
+  pickRandomDecimalFromInterval,
+  pickRandomIntFromInterval,
+} from "./utils";
+
+export const CIRCLE_ROUGHNESS2 = [
+  ...new Array(4).fill(null).map(() => ({
+    roughness: 0.4,
+    metalness: 0.8,
+  })),
+  {
+    roughness: pickRandomDecimalFromInterval(0.2, 0.6),
+    metalness: pickRandomIntFromInterval(2, 8),
+  },
+];
+
 export const CIRCLE_ROUGHNESS = [
-  ...new Array(36).fill(null).map(() => 0),
+  ...new Array(16).fill(null).map(() => 0),
   1,
   2,
   3,

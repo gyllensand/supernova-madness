@@ -12,11 +12,13 @@ import { start } from "tone";
 import {
   getSizeByAspect,
   getSizeByWidthAspect,
+  minMaxNumber,
   pickRandomBoolean,
   pickRandomColorWithTheme,
   pickRandomDecimalFromInterval,
   pickRandomHash,
   pickRandomIntFromInterval,
+  range,
   sortRandom,
 } from "./utils";
 import { useSprings } from "@react-spring/three";
@@ -31,6 +33,34 @@ import {
 } from "./constants";
 import OuterCircle, { OuterCircleProps } from "./OuterCircle";
 import { CHORDS, PLUCKS, Sample } from "./App";
+
+export const getSpotlightAngle = (aspect: number, circleRoughness: number) =>
+  circleRoughness === 4
+    ? minMaxNumber(
+        aspect > 1 ? 0.15 : range(0.5, 2, 0.01, 0.15, aspect),
+        0.01,
+        0.15
+      )
+    : circleRoughness === 3
+    ? minMaxNumber(
+        aspect > 1 ? 0.15 : range(0.3, 1.5, 0.01, 0.15, aspect),
+        0.01,
+        0.15
+      )
+    : circleRoughness === 2
+    ? minMaxNumber(
+        aspect > 1 ? 0.15 : range(0.3, 1, 0.01, 0.15, aspect),
+        0.01,
+        0.15
+      )
+    : minMaxNumber(
+        aspect > 1 ? 0.15 : range(0.3, 1, 0.01, 0.15, aspect),
+        0.01,
+        0.15
+      );
+
+export const getSpotlightPosY = (aspect: number) =>
+  minMaxNumber(aspect > 1 ? 15 : range(0.3, 1, 10, 15, aspect), 10, 15);
 
 const outerCircleCount = pickRandomIntFromInterval(10, 15);
 export const circleRoughness = pickRandomHash(CIRCLE_ROUGHNESS);
@@ -244,11 +274,11 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
 
   return (
     <>
-      <OrbitControls enabled={true} />
+      <OrbitControls enabled={false} />
       <ambientLight ref={ambientRef} intensity={0.2} />
       <spotLight
         ref={mainLightRef}
-        position={[0, 15, -7.5]}
+        position={[0, getSpotlightPosY(aspect), -7.5]}
         penumbra={1}
         intensity={3}
         distance={30}
@@ -260,7 +290,7 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
         intensity={1}
         penumbra={1}
         distance={25}
-        angle={0.15}
+        angle={getSpotlightAngle(aspect, circleRoughness)}
       />
 
       <group
