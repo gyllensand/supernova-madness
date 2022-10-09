@@ -35,15 +35,21 @@ import {
 import OuterCircle, { OuterCircleProps } from "./OuterCircle";
 import { CHORDS, PLUCKS, Sample } from "./App";
 
-export const getSpotlightAngle = (aspect: number) =>
+const getSpotlightAngle = (aspect: number) =>
   minMaxNumber(
     aspect > 1 ? 0.15 : range(0.3, 1, 0.01, 0.15, aspect),
     0.01,
     0.15
   );
 
-export const getSpotlightPosY = (aspect: number) =>
-  minMaxNumber(aspect > 1 ? 15 : range(0.3, 1, 10, 15, aspect), 10, 15);
+const spotLightY = pickRandomHash([15, -15]);
+
+const getSpotlightPosY = (aspect: number) =>
+  minMaxNumber(
+    aspect > 1 ? spotLightY : range(0.3, 1, 10, spotLightY, aspect),
+    10,
+    spotLightY
+  );
 
 export const pitch = pickRandomHash(PITCH);
 const outerCircleCount = pickRandomIntFromInterval(10, 15);
@@ -145,16 +151,11 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
   }));
 
   const onPointerDown = useCallback(async () => {
-    if (!toneInitialized.current) {
-      await start();
-      toneInitialized.current = true;
-    }
-
     const shuffledIndexes = sortRandom(circles.map((o, i) => i));
     const shuffledOuterIndexes = sortRandom(outerCircles.map((o, i) => i));
 
     setOuterCircleSprings.start((i) => ({
-      opacity: circleWireframe ? 0.1 : 0.05,
+      opacity: 0.05,
       scale: [0.9, 0.9, 0.9],
       delay: shuffledOuterIndexes[i] * 40,
       config: {
@@ -173,6 +174,11 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
         friction: 45,
       },
     }));
+
+    if (!toneInitialized.current) {
+      await start();
+      toneInitialized.current = true;
+    }
 
     const currentSampler = pickRandomHash(availableChords);
     setLastPlayedSample(currentSampler);
