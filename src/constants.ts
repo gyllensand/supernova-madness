@@ -38,7 +38,7 @@ export const DARK_BG_COLORS = [
   "#004932",
   "#c91414",
   "#aa336a",
-  "#d54c1a",
+  "#fd6c00",
 ];
 
 export const LIGHT_BG_COLORS = [

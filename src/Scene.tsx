@@ -76,7 +76,7 @@ export const ringSegments = circleWireframe
 // @ts-ignore
 window.$fxhashFeatures = {
   pitch: pitch === 0 ? "G4" : "E4",
-  circleCount,
+  petalCount: circleCount,
   wireframe: circleWireframe ? "true" : "false",
   bgColor,
   primaryColor: primaryColor === "" ? "transparent" : primaryColor,
