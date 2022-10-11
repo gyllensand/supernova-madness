@@ -13,13 +13,15 @@ import {
   getSizeByAspect,
   getSizeByWidthAspect,
   minMaxNumber,
+  pickRandom,
   pickRandomBoolean,
   pickRandomColorWithTheme,
-  pickRandomDecimalFromInterval,
+  pickRandomHashDecimalFromInterval,
   pickRandomHash,
   pickRandomIntFromInterval,
   range,
   sortRandom,
+  pickRandomDecimalFromInterval,
 } from "./utils";
 import { useSprings } from "@react-spring/three";
 import { SpotLight, AmbientLight } from "three";
@@ -83,29 +85,29 @@ window.$fxhashFeatures = {
 };
 
 const circles = new Array(circleCount).fill(null).map<CircleProps>((o, i) => ({
-  radius: pickRandomDecimalFromInterval(1.5, 3),
-  thetaStart: pickRandomDecimalFromInterval(0, Math.PI * 2),
-  thetaLength: pickRandomDecimalFromInterval(Math.PI / 3.5, Math.PI / 1.5),
+  radius: pickRandomHashDecimalFromInterval(1.5, 3),
+  thetaStart: pickRandomHashDecimalFromInterval(0, Math.PI * 2),
+  thetaLength: pickRandomHashDecimalFromInterval(Math.PI / 3.5, Math.PI / 1.5),
   wireframe: circleWireframe,
   circleInnerRadius,
-  emissiveIntensity: pickRandomDecimalFromInterval(0.2, 0.5),
+  emissiveIntensity: pickRandomHashDecimalFromInterval(0.2, 0.5),
   color: pickRandomColorWithTheme(primaryColor, primaryTheme, 10),
   zPos: 1 - i / 8,
-  distortSpeed: pickRandomDecimalFromInterval(0.1, 1.5),
+  distortSpeed: pickRandomHashDecimalFromInterval(0.1, 1.5),
 }));
 
 const outerCircles = new Array(outerCircleCount)
   .fill(null)
   .map<OuterCircleProps>((o, i) => ({
-    radius: pickRandomDecimalFromInterval(5, 6),
-    thetaStart: pickRandomDecimalFromInterval(0, Math.PI * 2),
-    thetaLength: pickRandomDecimalFromInterval(Math.PI / 2, Math.PI / 1.5),
+    radius: pickRandomHashDecimalFromInterval(5, 6),
+    thetaStart: pickRandomHashDecimalFromInterval(0, Math.PI * 2),
+    thetaLength: pickRandomHashDecimalFromInterval(Math.PI / 2, Math.PI / 1.5),
     wireframe: circleWireframe,
-    circleInnerRadius: pickRandomDecimalFromInterval(3, 4),
-    emissiveIntensity: pickRandomDecimalFromInterval(0.1, 1),
+    circleInnerRadius: pickRandomHashDecimalFromInterval(3, 4),
+    emissiveIntensity: pickRandomHashDecimalFromInterval(0.1, 1),
     color: pickRandomColorWithTheme(primaryColor, primaryTheme, 10),
     zPos: 1 - i / 3,
-    distortSpeed: pickRandomDecimalFromInterval(0.1, 0.5),
+    distortSpeed: pickRandomHashDecimalFromInterval(0.1, 0.5),
   }));
 
 const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
@@ -180,7 +182,7 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
       toneInitialized.current = true;
     }
 
-    const currentSampler = pickRandomHash(availableChords);
+    const currentSampler = pickRandom(availableChords);
     setLastPlayedSample(currentSampler);
   }, [setCircleSprings, setOuterCircleSprings, availableChords]);
 

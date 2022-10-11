@@ -21,12 +21,22 @@ export const pickRandomIntFromInterval = (min: number, max: number) => {
   return Math.floor(fxrand() * (max - min + 1) + min);
 };
 
-export const pickRandomDecimalFromInterval = (
+export const pickRandomHashDecimalFromInterval = (
   min: number,
   max: number,
   decimalPlaces = 2
 ) => {
   const rand = fxrand() * (max - min) + min;
+  const power = Math.pow(10, decimalPlaces);
+  return Math.floor(rand * power) / power;
+};
+
+export const pickRandomDecimalFromInterval = (
+  min: number,
+  max: number,
+  decimalPlaces = 2
+) => {
+  const rand = Math.random() * (max - min) + min;
   const power = Math.pow(10, decimalPlaces);
   return Math.floor(rand * power) / power;
 };

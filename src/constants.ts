@@ -1,4 +1,4 @@
-import { pickRandomDecimalFromInterval } from "./utils";
+import { pickRandomHashDecimalFromInterval } from "./utils";
 
 export const PITCH = [0, 1];
 
@@ -8,8 +8,8 @@ export const CIRCLE_ROUGHNESS = [
     metalness: 0.8,
   })),
   {
-    roughness: pickRandomDecimalFromInterval(0.2, 0.6),
-    metalness: pickRandomDecimalFromInterval(2, 5),
+    roughness: pickRandomHashDecimalFromInterval(0.2, 0.6),
+    metalness: pickRandomHashDecimalFromInterval(2, 5),
   },
 ];
 
